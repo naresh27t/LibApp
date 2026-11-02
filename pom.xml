@@ -21,7 +21,8 @@
     <description>Library Management System</description>
 
     <properties>
-        <java.version>25</java.version>
+        <java.version>17</java.version>
+        <maven.compiler.release>17</maven.compiler.release>
     </properties>
 
     <dependencies>
