@@ -1,12 +1,12 @@
 
 package com.example.library.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,15 +17,13 @@ import com.example.library.Repository.StudentRepository;
 public class LoginController {
 
     @Autowired
-    StudentRepository repo;
+    private StudentRepository repo;
 
-    // Display login page
     @GetMapping("/signin")
     public String showloginpage() {
-        return "login.html";
+        return "login";
     }
 
-    // Validate login credentials
     @PostMapping("/signin")
     public String Login(
             @RequestParam String studentname,
@@ -33,26 +31,25 @@ public class LoginController {
             HttpServletRequest request,
             Model model) {
 
-        Student entity = repo.findByStudentnameAndPassword(
-                studentname, password);
+        Student entity =
+            repo.findByStudentnameAndPassword(studentname, password);
 
         if (entity == null) {
             model.addAttribute("error",
-                    "Invalid username or password. Please try again.");
-
-            return "login.html";
+                "Invalid username or password. Please try again.");
+            return "login";
         }
 
-        // Create student session
-        request.getSession().invalidate();
+        if (request.getSession(false) != null) {
+            request.getSession(false).invalidate();
+        }
 
         request.getSession(true).setAttribute(
-                "studentId", entity.getId());
+            "studentId", entity.getId());
 
         return "redirect:/Dashboard.html";
     }
 
-    // Logout
     @GetMapping("/logout")
     public String logout(HttpServletRequest request) {
 
