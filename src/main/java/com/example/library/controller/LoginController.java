@@ -32,7 +32,8 @@ public class LoginController {
             Model model) {
 
         Student entity =
-            repo.findByStudentnameAndPassword(studentname, password);
+            repo.findFirstByStudentnameAndPasswordOrderByIdAsc(
+                    studentname, password);
 
         if (entity == null) {
             model.addAttribute("error",

@@ -3,12 +3,14 @@ package com.example.library;
 
 import static org.mockito.Mockito.when;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,6 +32,13 @@ public class RegisterControllerTest {
     @MockitoBean
     private StudentRepository repo;
 
+    @Test
+    void testSignInPageIsAvailable() throws Exception {
+        mockMvc.perform(get("/signin"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("login"));
+    }
+
     // Test 1: Login with correct credentials
     @Test
     void testLoginWithCorrectCredentials() throws Exception {
@@ -39,7 +48,7 @@ public class RegisterControllerTest {
         // Set ID because LoginController stores it in the session
         user.setId(1L);
 
-        when(repo.findByStudentnameAndPassword(
+        when(repo.findFirstByStudentnameAndPasswordOrderByIdAsc(
                 "testuser", "testpassword"))
                 .thenReturn(user);
 
@@ -48,14 +57,15 @@ public class RegisterControllerTest {
                 .param("password", "testpassword"))
 
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/Dashboard.html"));
+                .andExpect(redirectedUrl("/Dashboard.html"))
+                .andExpect(request().sessionAttribute("studentId", 1L));
     }
 
     // Test 2: Login with incorrect credentials
     @Test
     void testLoginWithIncorrectCredentials() throws Exception {
 
-        when(repo.findByStudentnameAndPassword(
+        when(repo.findFirstByStudentnameAndPasswordOrderByIdAsc(
                 "wronguser", "wrongpassword"))
                 .thenReturn(null);
 
@@ -64,7 +74,7 @@ public class RegisterControllerTest {
                 .param("password", "wrongpassword"))
 
                 .andExpect(status().isOk())
-                .andExpect(view().name("login.html"))
+                .andExpect(view().name("login"))
                 .andExpect(model().attributeExists("error"));
     }
 }

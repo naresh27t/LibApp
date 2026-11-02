@@ -18,7 +18,7 @@ public class RegisterController {
 
     @GetMapping("/signup")
     public String DisplaySignup() {
-        return "register.html";
+        return "register";
     }
 
     @PostMapping("/signup")

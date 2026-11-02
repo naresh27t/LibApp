@@ -7,6 +7,7 @@ import com.example.library.Domain.Student;
 
 @Repository 
 public interface StudentRepository extends JpaRepository<Student, Long> {
-    Student findByStudentnameAndPassword(String studentname, String password);
+    Student findFirstByStudentnameAndPasswordOrderByIdAsc(
+            String studentname, String password);
 
 }
